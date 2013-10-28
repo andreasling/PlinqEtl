@@ -48,15 +48,8 @@ namespace PlinqEtl.Exploratory
 
 		public int ThrowOnOdds(int i)
 		{
-			/* if (i % 2 == 0)
-				return i;
-
-			throw new Exception("error: " + i); */
-
 		    return i.ThrowIf(j => j%2 != 0);
 		}
-
-
 	}
 
     public static class TestHelperExtensions
@@ -75,9 +68,9 @@ namespace PlinqEtl.Exploratory
         }
     }
 
-	public static class PlinqEtlExtensionsFirstTake
+	/* public static class PlinqEtlExtensionsFirstTake
 	{
-		/* public static IEnumerable<TResult> Select<TSource, TResult> (this IEnumerable<TSource> source, Func<TSource, TResult> selector)
+		/ * public static IEnumerable<TResult> Select<TSource, TResult> (this IEnumerable<TSource> source, Func<TSource, TResult> selector)
 		{
 			/ * foreach (var item in source) {
 
@@ -91,17 +84,17 @@ namespace PlinqEtl.Exploratory
 				yield return result;
 			} * /
 			return new CatchingEnumerator<TSource, TResult>(source, selector);
-		} */
+		} * /
 
 
 
-		/* public static IEnumerable<Exception> GetExceptions<TSource> (this IEnumerable<TSource> source)
+		/ * public static IEnumerable<Exception> GetExceptions<TSource> (this IEnumerable<TSource> source)
 		{
 			if (source is ICatchingEnumerator)
 				return (source as ICatchingEnumerator).Exceptions;
 
 			return Enumerable.Empty<Exception>();
-		} */
+		} * /
 
 		interface ICatchingEnumerator
 		{
@@ -187,6 +180,5 @@ namespace PlinqEtl.Exploratory
 			}
 			#endregion
 		}
-	}
+	} */
 }
-
