@@ -60,7 +60,17 @@ namespace PlinqEtl.Core
 
             public bool MoveNext()
             {
-                return sourceEnumerator.MoveNext();
+                while (true)
+                {
+                    try
+                    {
+                        return sourceEnumerator.MoveNext();
+                    }
+                    catch (Exception exception)
+                    {
+                        exceptions.Add(exception);
+                    }
+                }
             }
 
             public void Reset()

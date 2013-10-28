@@ -36,15 +36,26 @@ namespace PlinqEtl.Exploratory
         }
 
         [Test]
-		public void ShouldCatchException()
+		public void ShouldCatchSelectException()
 		{
 			var actual =
-				(from i in Enumerable.Range(0,2).ToCatching()
-				 select ThrowOnOdds(i));
+				from i in Enumerable.Range(0,2).ToCatching()
+				select ThrowOnOdds(i);
 
             Assert.That(actual.Single(), Is.EqualTo(0));
 			Assert.That(actual.GetExceptions().Single().Message, Is.EqualTo("1"));
 		}
+
+        [Test]
+        public void ShouldCatchSourceException()
+        {
+            var actual =
+                from i in Enumerable.Range(0, 2).ThrowWhere(i => i % 2 != 0).ToCatching()
+                select i;
+
+            Assert.That(actual.Single(), Is.EqualTo(0));
+            Assert.That(actual.GetExceptions().Single().Message, Is.EqualTo("1"));
+        }
 
 		public int ThrowOnOdds(int i)
 		{
