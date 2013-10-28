@@ -57,7 +57,21 @@ namespace PlinqEtl.Exploratory
             Assert.That(actual.GetExceptions().Single().Message, Is.EqualTo("1"));
         }
 
-		public int ThrowOnOdds(int i)
+	    [Test]
+	    public void SelectIntoTest()
+	    {
+	        var actual =
+	            from i in Enumerable.Range(0, 2).ToCatching()
+	            select i + 1
+	            into j
+	            select j*2 into k
+	            select k.ThrowIf(l => l == 4);
+
+	        Assert.That(actual.Single(), Is.EqualTo(2));
+            Assert.That(actual.GetExceptions().Single().Message, Is.EqualTo("4"));
+	    }
+
+	    public int ThrowOnOdds(int i)
 		{
 		    return i.ThrowIf(j => j%2 != 0);
 		}

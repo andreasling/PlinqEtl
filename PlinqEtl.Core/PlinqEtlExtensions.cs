@@ -161,7 +161,7 @@ namespace PlinqEtl.Core
                 get { return Current; }
             }
 
-            public IEnumerable<TResult2> Select<TResult2>(Func<TResult, TResult2> selector)
+            public CatchingSelectIterator<TSource, TResult2> Select<TResult2>(Func<TResult, TResult2> selector)
             {
                 return new CatchingSelectIterator<TSource, TResult2>(source, x => selector(this.selector(x)));
             }
