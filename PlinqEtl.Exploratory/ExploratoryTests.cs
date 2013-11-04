@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
+using System.IO;
 using NUnit.Framework;
 using System.Linq;
 using PlinqEtl.Core;
@@ -71,11 +73,95 @@ namespace PlinqEtl.Exploratory
             Assert.That(actual.GetExceptions().Single().Message, Is.EqualTo("4"));
 	    }
 
+        [Test]
+        public void ShouldSelectFromDynamic()
+        {
+            dynamic row = new { id = 0 };
+            var rows = new[] { row };
+            var actual =
+                from r in rows
+                select new {r.id};
+            
+            Assert.That(actual.First().id, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void ShouldParseSeparatedToDynamic()
+        {
+            var reader = new StringReader("id\tvalue\n0\ta\n1\tb\n");
+
+            var actual =
+                from row in EnumerateRows(reader)
+                select new { id = row.id as string };
+
+            Assert.That(actual.First().id, Is.EqualTo("0"));
+        }
+
+	    private static IEnumerable<dynamic> EnumerateRows(StringReader reader)
+	    {
+	        string line = null;
+	        Dictionary<string, int> columns = null;
+
+            line = reader.ReadLine();
+
+	        if (line != null)
+	        {
+                columns = line
+	                .Split('\t')
+	                .Select((column, index) => new
+	                                               {
+	                                                   column,
+	                                                   index
+	                                               })
+	                .ToDictionary(ci => ci.column, ci => ci.index);
+	            
+	        }
+
+	        line = reader.ReadLine();
+
+	        while (line != null)
+	        {
+	            yield return new DynamicRow(columns, line);
+
+	            line = reader.ReadLine();
+	        }
+	    }
+
 	    public int ThrowOnOdds(int i)
 		{
 		    return i.ThrowIf(j => j%2 != 0);
 		}
 	}
+
+    public class DynamicRow : DynamicObject
+    {
+        private readonly Dictionary<string, int> columns;
+        private readonly string[] cells;
+
+        public DynamicRow(Dictionary<string, int> columns, string row)
+        {
+            this.columns = columns;
+            cells = row.Split('\t');
+        }
+
+        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        {
+            if (columns.ContainsKey(binder.Name))
+            {
+                var index = columns[binder.Name];
+
+                var s = cells[index];
+                if (binder.ReturnType == typeof (int))
+                    result = int.Parse(s);
+                else
+                    result = s;
+                return true;
+            }
+
+            result = null;
+            return false;
+        }
+    }
 
     public static class TestHelperExtensions
     {
