@@ -10,7 +10,6 @@
     <RootNamespace>PlinqEtl.Exploratory</RootNamespace>
     <AssemblyName>PlinqEtl.Exploratory</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -50,7 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PlinqEtl.Core\PlinqEtl.Core.csproj">
-      <Project>{0a2aa013-2fe8-4264-b1aa-d929d5edb830}</Project>
+      <Project>{0A2AA013-2FE8-4264-B1AA-D929D5EDB830}</Project>
       <Name>PlinqEtl.Core</Name>
     </ProjectReference>
   </ItemGroup>
