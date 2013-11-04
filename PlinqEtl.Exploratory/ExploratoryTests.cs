@@ -92,9 +92,10 @@ namespace PlinqEtl.Exploratory
 
             var actual =
                 from row in EnumerateRows(reader)
-                select new { id = row.id as string };
+                select new { id = (int)row.id };
 
-            Assert.That(actual.First().id, Is.EqualTo("0"));
+			var id = actual.First ().id;
+            Assert.That(id, Is.EqualTo(0));
         }
 
 	    private static IEnumerable<dynamic> EnumerateRows(StringReader reader)
@@ -133,6 +134,27 @@ namespace PlinqEtl.Exploratory
 		}
 	}
 
+	public class DynamicCell : DynamicObject
+	{
+		private readonly object value;
+
+		public DynamicCell (object value)
+		{
+			this.value = value;
+		}
+
+		public override bool TryConvert (ConvertBinder binder, out object result)
+		{
+			//return base.TryConvert (binder, out result);
+			if (binder.ReturnType == typeof(int)) {
+				result = int.Parse(value as string);
+			}
+			else
+				result = value;
+			return true;
+		}
+	}
+
     public class DynamicRow : DynamicObject
     {
         private readonly Dictionary<string, int> columns;
@@ -154,7 +176,7 @@ namespace PlinqEtl.Exploratory
                 if (binder.ReturnType == typeof (int))
                     result = int.Parse(s);
                 else
-                    result = s;
+                    result = new DynamicCell(s);
                 return true;
             }
 
